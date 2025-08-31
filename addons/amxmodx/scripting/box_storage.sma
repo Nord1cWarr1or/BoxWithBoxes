@@ -120,13 +120,27 @@ public plugin_end()
 }
 save_boxes()
 {
-    new configsdir[256];
-    get_configsdir(configsdir, charsmax(configsdir));
+    new filepath[256];
+    get_configsdir(filepath, charsmax(filepath));
+
+    add(filepath, charsmax(filepath), "/box_with_boxes");
+
+    if(!dir_exists(filepath)) {
+        mkdir(filepath);
+    }
+
+    add(filepath, charsmax(filepath), "/maps");
+
+    if(!dir_exists(filepath)) {
+        mkdir(filepath);
+    }
+
     new map[32];
     get_mapname(map, charsmax(map));
-    add(configsdir, charsmax(configsdir), fmt("/box_with_boxes/maps/%s.ini", map));
 
-    new f = fopen(configsdir, "w");
+    add(filepath, charsmax(filepath), fmt("/%s.ini", map));
+
+    new f = fopen(filepath, "w");
     if(!f) {
         // TODO: warn?
         return;
@@ -153,8 +167,8 @@ save_boxes()
         fputs(f, fmt("^"maxs^" = ^"%f %f %f^"^n", maxs[0], maxs[1], maxs[2]));
     }
     if(f) {
-        if(!found && file_exists(configsdir)) {
-            delete_file(configsdir);
+        if(!found && file_exists(filepath)) {
+            delete_file(filepath);
         }
         fclose(f);
     }
